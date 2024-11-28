@@ -49,4 +49,8 @@ export class TasksController {
   findone(@Param('id') id: string): Promise<Task> {
     return this.tasksService.findTaskById(id);
   }
+  @Post()
+  createTask(@Body() createTask: CreateTaskDto): Promise<Task> {
+    return this.tasksService.createTask(createTask);
+  }
 }
