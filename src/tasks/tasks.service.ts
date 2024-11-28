@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import {  TaskStatus } from './model/task-status.enum';
+import { TaskStatus } from './model/task-status.enum';
 import { v4 as uuid } from 'uuid';
 import { FilteringTaskDto } from './dto/filtering.dto';
 import { TaskRepository } from './task.repository';
+import { Task } from './entities/task.entity';
 @Injectable()
 export class TasksService {
-constructor(private taskRepository:TaskRepository){}
+  constructor(private taskRepository: TaskRepository) {}
   // create(CreateTaskDto: CreateTaskDto): Task {
   //   const { title, description } = CreateTaskDto;
   //   const task: Task = {
@@ -66,4 +67,11 @@ constructor(private taskRepository:TaskRepository){}
 
   //   return 'Task deleted the final tak array is ' + JSON.stringify(this.task);
   // }
+  async findTaskById(id: string): Promise<Task> {
+    const singleTask = await this.taskRepository.findOne(id);
+    if (!singleTask) {
+      throw new NotFoundException(`Task with the  id of ${id} does not exists`);
+    }
+    return singleTask;
+  }
 }
