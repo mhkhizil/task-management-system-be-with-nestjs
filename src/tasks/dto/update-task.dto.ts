@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateTaskDto } from './create-task.dto';
-import { TaskStatus } from '../model/task.model';
+import { TaskStatus } from '../model/task-status.enum';
 import { IsEnum, IsString } from 'class-validator';
 
 export class UpdateTaskDto extends PartialType(CreateTaskDto) {
