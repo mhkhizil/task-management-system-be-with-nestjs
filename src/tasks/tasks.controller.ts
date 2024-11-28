@@ -11,7 +11,7 @@ import {
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { Task } from './entities/task.entity';
+import { Task } from './model/task.model';
 import { FilteringTaskDto } from './dto/filtering.dto';
 
 @Controller('tasks')
@@ -25,7 +25,7 @@ export class TasksController {
 
   @Get()
   findAll(@Query() filteingDto: FilteringTaskDto): Task[] {
-   return Object.keys(filteingDto).length
+    return Object.keys(filteingDto).length
       ? this.tasksService.findAllTaskWithQuery(filteingDto)
       : this.tasksService.findAllTask();
   }

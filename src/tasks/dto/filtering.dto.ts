@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { TaskStatus } from '../entities/task.entity';
+import { TaskStatus } from '../model/task.model';
 
 export class FilteringTaskDto {
   @IsOptional()
