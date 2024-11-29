@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { UpdateTaskStatusDto } from './dto/update-task.dto';
 import { TaskStatus } from './model/task-status.enum';
 
 import { FilteringTaskDto } from './dto/filtering.dto';
@@ -86,5 +86,33 @@ export class TasksService {
     });
     await this.taskRepository.save(taskObj);
     return taskObj;
+  }
+  async remove(id: string): Promise<string> {
+    const delStatus = await this.taskRepository.delete(id);
+    // if (!delStatus.affected) {
+    //   throw new NotFoundException()
+    // }
+    return 'Task has been deleted successfull';
+  }
+  async updateTask(id: string, status: TaskStatus): Promise<Task> {
+    const task = await this.findTaskById(id);
+    task.status = status;
+    await this.taskRepository.save(task);
+    return task;
+  }
+  async findTask(filteingDto: FilteringTaskDto): Promise<Task[]> {
+    const { search, status } = filteingDto;
+    const query = this.taskRepository.createQueryBuilder('task');
+    if (search) {
+      query.andWhere(
+        'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
+        { search: `%${search}%` },
+      );
+    }
+    if (status) {
+      query.andWhere('task.status=:status', { status });
+    }
+    const task = query.getMany();
+    return task;
   }
 }
