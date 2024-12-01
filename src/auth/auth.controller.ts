@@ -20,6 +20,10 @@ export class AuthController {
   signUp(@Body() authCredentialDto: createAuthCredentialDto):Promise<void> {
     return this.authService.signUp(authCredentialDto);
   }
+  @Post('signin')
+  signIn(@Body() authCredentialDto: createAuthCredentialDto):Promise<{accessToken:string}> {
+    return this.authService.singIn(authCredentialDto);
+  }
 
   @Get()
   findAll() {
