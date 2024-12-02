@@ -7,20 +7,21 @@ import { UserRepository } from './users.repository';
 import { DataSource } from 'typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './jwt-strategy';
 
 @Module({
   imports: [   PassportModule.register({
     defaultStrategy: 'jwt',
   }),
   JwtModule.register({
-    secret: 'topsecret5!',
+    secret: 'topSecret51',
     signOptions: {
       expiresIn: 3600,
     },
   }),TypeOrmModule.forFeature([User])],
   controllers: [AuthController],
   providers: [
-    AuthService,
+    AuthService,JwtStrategy,
     {
       provide: UserRepository,
       useFactory: (dataSource: DataSource) => new UserRepository(dataSource),

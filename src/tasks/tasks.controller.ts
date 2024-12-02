@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -14,8 +15,10 @@ import {  UpdateTaskStatusDto } from './dto/update-task.dto';
 
 import { FilteringTaskDto } from './dto/filtering.dto';
 import { Task } from './entities/task.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('tasks')
+ @UseGuards(AuthGuard('jwt'))
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
@@ -45,6 +48,7 @@ export class TasksController {
   // remove(@Param('id') id: string): String {
   //   return this.tasksService.remove(id);
   // }
+
   @Get(':id')
   findone(@Param('id') id: string): Promise<Task> {
     return this.tasksService.findTaskById(id);
