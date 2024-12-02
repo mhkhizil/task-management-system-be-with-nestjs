@@ -16,6 +16,8 @@ import {  UpdateTaskStatusDto } from './dto/update-task.dto';
 import { FilteringTaskDto } from './dto/filtering.dto';
 import { Task } from './entities/task.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/entities/user.entity';
 
 @Controller('tasks')
  @UseGuards(AuthGuard('jwt'))
@@ -54,8 +56,8 @@ export class TasksController {
     return this.tasksService.findTaskById(id);
   }
   @Post()
-  createTask(@Body() createTask: CreateTaskDto): Promise<Task> {
-    return this.tasksService.createTask(createTask);
+  createTask(@Body() createTask: CreateTaskDto,@GetUser() user :User): Promise<Task> {
+    return this.tasksService.createTask(createTask,user);
   }
   @Delete(':id')
   deleteTask(@Param('id') id: string):Promise<string> {
@@ -67,8 +69,8 @@ export class TasksController {
 return this.tasksService.updateTask(id,status)
   }
   @Get()
-  findAll(@Query() filteingDto: FilteringTaskDto): Promise<Task[]> {
-  return this.tasksService.findTask(filteingDto)
+  findAll(@Query() filteingDto: FilteringTaskDto,@GetUser() user:User): Promise<Task[]> {
+  return this.tasksService.findTask(filteingDto,user)
   }
 
 }
