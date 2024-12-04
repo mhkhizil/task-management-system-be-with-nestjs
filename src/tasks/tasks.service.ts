@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskStatusDto } from './dto/update-task.dto';
 import { TaskStatus } from './model/task-status.enum';
@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
 @Injectable()
 export class TasksService {
+  private logger=new Logger("Task Service")
   constructor(@InjectRepository(Task) private taskRepository: TaskRepository) {}
   // create(CreateTaskDto: CreateTaskDto): Task {
   //   const { title, description } = CreateTaskDto;
@@ -69,9 +70,9 @@ export class TasksService {
 
   //   return 'Task deleted the final tak array is ' + JSON.stringify(this.task);
   // }
-  async findTaskById(id: string): Promise<Task> {
+  async findTaskById(id: string,user:User): Promise<Task> {
     const singleTask = await this.taskRepository.findOne({
-      where: { id },
+      where: { id ,user},
     });
     if (!singleTask) {
       throw new NotFoundException(`Task with the  id of ${id} does not exists`);
@@ -86,18 +87,23 @@ export class TasksService {
       status: TaskStatus.OPEN,
       user,
     });
-    await this.taskRepository.save(taskObj);
+    try {
+    await this.taskRepository.save(taskObj);  
+    } catch (error) {
+      this.logger.error(`This is the error caused by creating task by ${user.username} with the info of ${JSON.stringify(createTask)}`,error)
+    }
+    
     return taskObj;
   }
-  async remove(id: string): Promise<string> {
-    const delStatus = await this.taskRepository.delete(id);
-    // if (!delStatus.affected) {
-    //   throw new NotFoundException()
-    // }
+  async remove(id: string,user:User): Promise<string> {
+    const delStatus = await this.taskRepository.delete({id,user});
+    if (!delStatus.affected) {
+      throw new NotFoundException()
+    }
     return 'Task has been deleted successfull';
   }
-  async updateTask(id: string, status: TaskStatus): Promise<Task> {
-    const task = await this.findTaskById(id);
+  async updateTask(id: string, status: TaskStatus,user:User): Promise<Task> {
+    const task = await this.findTaskById(id,user);
     task.status = status;
     await this.taskRepository.save(task);
     return task;
