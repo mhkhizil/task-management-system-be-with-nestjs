@@ -8,11 +8,13 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configSchemaValidation } from './config.schema';
+import { Logger } from '@nestjs/common';
+const logger = new Logger('Bootstrap');
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`.env.stage.${process.env.STAGE}`],
+      envFilePath: [`.env.stage.${process.env.STAGE || 'dev'}`],
       validationSchema: configSchemaValidation,
     }),
     TasksModule,
@@ -26,10 +28,10 @@ import { configSchemaValidation } from './config.schema';
           autoLoadEntities: true,
           synchronize: true,
           host: configService.get('DB_HOST'),
-          port: configService.get('DB_PORT'),
-          username: configService.get('DB_USERNAME'),
-          password: configService.get('DB_PASSWORD'),
-          database: configService.get('DB_NAME'),
+        port: configService.get('DB_PORT'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_DATABASE'),
         };
       },
     }),
